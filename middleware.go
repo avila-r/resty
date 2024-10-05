@@ -188,7 +188,7 @@ func parseRequestBody(c *Client, r *Request) error {
 		case len(c.FormData) > 0 || len(r.FormData) > 0: // Handling Form Data
 			handleFormData(c, r)
 		case r.Body != nil: // Handling Request body
-			handleContentType(c, r)
+			handleContentType(r)
 
 			if err := handleRequestBody(c, r); err != nil {
 				return err
@@ -321,8 +321,8 @@ func requestLogger(c *Client, r *Request) error {
 	if r.Debug {
 		rr := r.RawRequest
 		rh := copyHeaders(rr.Header)
-		if c.GetClient().Jar != nil {
-			for _, cookie := range c.GetClient().Jar.Cookies(r.RawRequest.URL) {
+		if c.GetDefaultClient().Jar != nil {
+			for _, cookie := range c.GetDefaultClient().Jar.Cookies(r.RawRequest.URL) {
 				s := fmt.Sprintf("%s=%s", cookie.Name, cookie.Value)
 				if c := rh.Get("Cookie"); c != "" {
 					rh.Set("Cookie", c+"; "+s)
@@ -348,7 +348,7 @@ func requestLogger(c *Client, r *Request) error {
 		reqLog += "~~~ REQUEST ~~~\n" +
 			fmt.Sprintf("%s  %s  %s\n", r.Method, rr.URL.RequestURI(), rr.Proto) +
 			fmt.Sprintf("HOST   : %s\n", rr.URL.Host) +
-			fmt.Sprintf("HEADERS:\n%s\n", composeHeaders(c, r, rl.Header)) +
+			fmt.Sprintf("HEADERS:\n%s\n", composeHeaders(rl.Header)) +
 			fmt.Sprintf("BODY   :\n%v\n", rl.Body) +
 			"------------------------------------------------------------------------------\n"
 
@@ -379,7 +379,7 @@ func responseLogger(c *Client, res *Response) error {
 			fmt.Sprintf("RECEIVED AT  : %v\n", res.ReceivedAt().Format(time.RFC3339Nano)) +
 			fmt.Sprintf("TIME DURATION: %v\n", res.Time()) +
 			"HEADERS      :\n" +
-			composeHeaders(c, res.Request, rl.Header) + "\n"
+			composeHeaders(rl.Header) + "\n"
 		if res.Request.isSaveResponse {
 			debugLog += "BODY         :\n***** RESPONSE WRITTEN INTO FILE *****\n"
 		} else {
@@ -494,7 +494,7 @@ func handleFormData(c *Client, r *Request) {
 	r.isFormData = true
 }
 
-func handleContentType(c *Client, r *Request) {
+func handleContentType(r *Request) {
 	contentType := r.Header.Get(hdrContentTypeKey)
 	if IsStringEmpty(contentType) {
 		contentType = DetectContentType(r.Body)
