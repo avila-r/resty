@@ -367,6 +367,16 @@ func (r *Request) SetResult(res interface{}) *Request {
 	if res != nil {
 		r.Result = getPointer(res)
 	}
+
+	return r
+}
+
+// Alias to SetResult()
+func (r *Request) ParseTo(res any) *Request {
+	if res != nil {
+		r.Result = getPointer(res)
+	}
+
 	return r
 }
 
