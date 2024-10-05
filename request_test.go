@@ -1096,7 +1096,7 @@ func TestGetWithCookies(t *testing.T) {
 	c.SetHostURL(ts.URL).SetDebug(true)
 
 	tu, _ := url.Parse(ts.URL)
-	c.GetClient().Jar.SetCookies(tu, []*http.Cookie{
+	c.GetDefaultClient().Jar.SetCookies(tu, []*http.Cookie{
 		{
 			Name:  "jar-go-resty-1",
 			Value: "From Jar - This is cookie 1 value",
@@ -1378,7 +1378,7 @@ func TestProxySetting(t *testing.T) {
 func TestGetClient(t *testing.T) {
 	client := New()
 	custom := New()
-	customClient := custom.GetClient()
+	customClient := custom.GetDefaultClient()
 
 	assertNotNil(t, customClient)
 	assertNotEqual(t, client, http.DefaultClient)
