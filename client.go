@@ -166,6 +166,54 @@ type User struct {
 // Client methods
 //___________________________________
 
+func (c *Client) Get(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodGet, url)
+}
+
+// Head method does HEAD HTTP request. It's defined in section 4.3.2 of RFC7231.
+func (c *Client) Head(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodHead, url)
+}
+
+// Post method does POST HTTP request. It's defined in section 4.3.3 of RFC7231.
+func (c *Client) Post(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodPost, url)
+}
+
+// Put method does PUT HTTP request. It's defined in section 4.3.4 of RFC7231.
+func (c *Client) Put(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodPut, url)
+}
+
+// Delete method does DELETE HTTP request. It's defined in section 4.3.5 of RFC7231.
+func (c *Client) Delete(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodDelete, url)
+}
+
+// Options method does OPTIONS HTTP request. It's defined in section 4.3.7 of RFC7231.
+func (c *Client) Options(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodOptions, url)
+}
+
+// Patch method does PATCH HTTP request. It's defined in section 2 of RFC5789.
+func (c *Client) Patch(url string) (*Response, error) {
+	r := c.Request()
+
+	return r.Execute(MethodPatch, url)
+}
+
 // SetHostURL method sets the Host URL in the client instance. It will be used with a request
 // raised from this client with a relative URL
 //
@@ -430,7 +478,7 @@ func (c *Client) SetDigestAuth(username, password string) *Client {
 
 // R method creates a new request instance; it's used for Get, Post, Put, Delete, Patch, Head, Options, etc.
 func (c *Client) R() *Request {
-	r := &Request{
+	return &Request{
 		QueryParam:    url.Values{},
 		FormData:      url.Values{},
 		Header:        http.Header{},
@@ -447,11 +495,15 @@ func (c *Client) R() *Request {
 		responseBodyLimit:   c.ResponseBodyLimit,
 		generateCurlOnDebug: c.generateCurlOnDebug,
 	}
-	return r
 }
 
 // NewRequest method is an alias for method `R()`.
 func (c *Client) NewRequest() *Request {
+	return c.R()
+}
+
+// Request method is an alias for method `R()`.
+func (c *Client) Request() *Request {
 	return c.R()
 }
 
@@ -1151,8 +1203,8 @@ func (c *Client) IsProxySet() bool {
 	return c.proxyURL != nil
 }
 
-// GetClient method returns the underlying [http.Client] used by the Resty.
-func (c *Client) GetClient() *http.Client {
+// GetDefaultClient method returns the underlying [http.Client] used by the Resty.
+func (c *Client) GetDefaultClient() *http.Client {
 	return c.httpClient
 }
 
