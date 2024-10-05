@@ -332,7 +332,7 @@ func closeq(v interface{}) {
 
 func silently(_ ...interface{}) {}
 
-func composeHeaders(c *Client, r *Request, hdrs http.Header) string {
+func composeHeaders(hdrs http.Header) string {
 	str := make([]string, 0, len(hdrs))
 	for _, k := range sortHeaderKeys(hdrs) {
 		str = append(str, "\t"+strings.TrimSpace(fmt.Sprintf("%25s: %s", k, strings.Join(hdrs[k], ", "))))
